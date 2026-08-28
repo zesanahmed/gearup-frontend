@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGearDetail } from "@/hooks/use-gear";
+import { useSession } from "@/hooks/use-session";
+import { RentGearForm } from "@/components/shared/rent-gear-form";
 
 export default function GearDetailsPage() {
   const params = useParams<{ id: string }>();
   const { data: gear, isLoading, isError } = useGearDetail(params.id);
+  const { data: session, isLoading: sessionLoading } = useSession();
 
   if (isLoading) {
     return (
@@ -82,15 +85,26 @@ export default function GearDetailsPage() {
             {gear.stock} in stock
           </p>
 
-          <Button
-            render={<Link href={`/auth/login?redirectTo=/gear/${gear.id}`} />}
-            nativeButton={false}
-            size="lg"
-            className="mt-6 w-full"
-            disabled={!gear.isAvailable || gear.stock === 0}
-          >
-            {gear.isAvailable ? "Sign in to Rent" : "Unavailable"}
-          </Button>
+          {!sessionLoading && !session && (
+            <Button
+              render={<Link href={`/auth/login?redirectTo=/gear/${gear.id}`} />}
+              nativeButton={false}
+              size="lg"
+              className="mt-6 w-full"
+            >
+              Sign in to Rent
+            </Button>
+          )}
+
+          {session?.role === "CUSTOMER" &&
+            gear.isAvailable &&
+            gear.stock > 0 && <RentGearForm gear={gear} />}
+
+          {session && session.role !== "CUSTOMER" && (
+            <p className="text-sm text-muted-foreground mt-6">
+              Only customer accounts can rent gear.
+            </p>
+          )}
         </div>
       </div>
 
