@@ -10,9 +10,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGearDetail } from "@/hooks/use-gear";
 import { useSession } from "@/hooks/use-session";
 import { RentGearForm } from "@/components/shared/rent-gear-form";
+import { useSearchParams } from "next/navigation";
+import { ReviewForm } from "@/components/shared/review-form";
 
 export default function GearDetailsPage() {
   const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const showReviewForm = searchParams.get("review") === "true";
   const { data: gear, isLoading, isError } = useGearDetail(params.id);
   const { data: session, isLoading: sessionLoading } = useSession();
 
@@ -111,6 +115,11 @@ export default function GearDetailsPage() {
       {gear.reviews && gear.reviews.length > 0 && (
         <>
           <Separator className="my-10" />
+          {session?.role === "CUSTOMER" && showReviewForm && (
+            <div className="mt-6">
+              <ReviewForm gearItemId={gear.id} />
+            </div>
+          )}
           <h2 className="text-lg font-semibold mb-4">Reviews</h2>
           <div className="space-y-4">
             {gear.reviews.map((review) => (
