@@ -57,7 +57,6 @@ function DeleteGearButton({
         render={
           <Button variant="ghost" size="sm" className="text-destructive" />
         }
-        nativeButton={false}
       >
         Delete
       </AlertDialogTrigger>

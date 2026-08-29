@@ -50,7 +50,6 @@ export function RentGearForm({ gear }: { gear: GearItem }) {
               className="w-full justify-start font-normal"
             />
           }
-          nativeButton={false}
         >
           <CalendarIcon className="mr-2 size-4" />
           {range?.from && range?.to
